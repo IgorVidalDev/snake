@@ -58,7 +58,8 @@ public class SnakeInstance {
     }
 
     public void setScore(final int score) {
-        this.score = score;
+        this.score = score; if(score!=0){ setSpeed((int)Math.round(speed-(speed/20)));}
+        //Sistema hiper avançado de progressão de velocidade
     }
 
     public int getSpeed() {

@@ -47,7 +47,7 @@ public class SnakeServiceImpl implements SnakeService {
 
     private final Random random = new Random();
 
-    private final Snake snake;
+    private static Snake snake;
 
     @Inject
     public SnakeServiceImpl(@SnakeProvider final Snake snake) {
@@ -192,8 +192,12 @@ public class SnakeServiceImpl implements SnakeService {
 
             updateScore(foodType);
             updateStatistics(foodType);
+            if(foodType==Type.BONUS){
+                snake.getSnakeEvents().add(SnakeEvent.FOOD_EATEN_BONUS);
 
-            snake.getSnakeEvents().add(SnakeEvent.FOOD_EATEN);
+            }
+            else{snake.getSnakeEvents().add(SnakeEvent.FOOD_EATEN);}
+
 
             popNextFood();
         } else {
@@ -228,11 +232,14 @@ public class SnakeServiceImpl implements SnakeService {
         return snake.getCurrentMovementFrame() == snake.getSpeed();
     }
 
-    private boolean isSnakeRunning() {
+    public static boolean isSnakeRunning() {
         return State.RUNNING.equals(snake.getState());
     }
 
     private void resetCurrentMovementFrame() {
         snake.setCurrentMovementFrame(0);
+    }
+    public static State getState(){
+        return snake.getState();
     }
 }

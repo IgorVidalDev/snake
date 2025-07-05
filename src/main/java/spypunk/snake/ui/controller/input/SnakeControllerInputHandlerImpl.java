@@ -18,6 +18,8 @@ import javax.inject.Singleton;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import spypunk.snake.model.Snake;
+import spypunk.snake.service.SnakeServiceImpl;
 import spypunk.snake.ui.controller.command.SnakeControllerCommand;
 import spypunk.snake.ui.controller.command.cache.SnakeControllerCommandCache;
 import spypunk.snake.ui.controller.command.cache.SnakeControllerCommandCache.SnakeControllerCommandType;
@@ -33,6 +35,8 @@ public class SnakeControllerInputHandlerImpl implements SnakeControllerInputHand
 
     private final SnakeControllerCommandCache snakeControllerCommandCache;
 
+
+
     @Inject
     public SnakeControllerInputHandlerImpl(final SnakeControllerCommandCache snakeControllerCommandCache) {
         this.snakeControllerCommandCache = snakeControllerCommandCache;
@@ -41,9 +45,8 @@ public class SnakeControllerInputHandlerImpl implements SnakeControllerInputHand
         pressedKeyEventCommandTypes.put(KeyEvent.VK_RIGHT, SnakeControllerCommandType.RIGHT);
         pressedKeyEventCommandTypes.put(KeyEvent.VK_DOWN, SnakeControllerCommandType.DOWN);
         pressedKeyEventCommandTypes.put(KeyEvent.VK_UP, SnakeControllerCommandType.UP);
-
         releasedKeyEventCommandTypes.put(KeyEvent.VK_SPACE, SnakeControllerCommandType.NEW_GAME);
-        releasedKeyEventCommandTypes.put(KeyEvent.VK_P, SnakeControllerCommandType.PAUSE);
+        releasedKeyEventCommandTypes.put(KeyEvent.VK_ESCAPE, SnakeControllerCommandType.PAUSE);
         releasedKeyEventCommandTypes.put(KeyEvent.VK_M, SnakeControllerCommandType.MUTE);
         releasedKeyEventCommandTypes.put(KeyEvent.VK_PAGE_UP, SnakeControllerCommandType.INCREASE_VOLUME);
         releasedKeyEventCommandTypes.put(KeyEvent.VK_PAGE_DOWN, SnakeControllerCommandType.DECREASE_VOLUME);
@@ -79,9 +82,16 @@ public class SnakeControllerInputHandlerImpl implements SnakeControllerInputHand
 
     private void onKey(final int keyCode, final Map<Integer, SnakeControllerCommandType> keyEventCommandTypes) {
         if (keyEventCommandTypes.containsKey(keyCode)) {
-            final SnakeControllerCommandType commandType = keyEventCommandTypes.get(keyCode);
+            if((SnakeServiceImpl.getState()== Snake.State.RUNNING||SnakeServiceImpl.getState()== Snake.State.PAUSED)&&keyCode == KeyEvent.VK_SPACE){
+                final SnakeControllerCommandType commandType = keyEventCommandTypes.get(KeyEvent.VK_ESCAPE);
+                triggeredCommands.add(commandType);
+            }
+            else {
+                final SnakeControllerCommandType commandType = keyEventCommandTypes.get(keyCode);
 
-            triggeredCommands.add(commandType);
+                triggeredCommands.add(commandType);
+            }
+
         }
     }
 }

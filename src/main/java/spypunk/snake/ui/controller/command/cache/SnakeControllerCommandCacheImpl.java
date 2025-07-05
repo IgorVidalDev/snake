@@ -62,6 +62,7 @@ public class SnakeControllerCommandCacheImpl implements SnakeControllerCommandCa
         snakeControllerCommands.put(SnakeControllerCommandType.PAUSE, createPauseCommand());
         snakeControllerCommands.put(SnakeControllerCommandType.GAME_OVER, createGameOverCommand());
         snakeControllerCommands.put(SnakeControllerCommandType.FOOD_EATEN, createFoodEatenCommand());
+        snakeControllerCommands.put(SnakeControllerCommandType.FOOD_EATEN_BONUS, createFoodEatenBonusCommand());
     }
 
     @Override
@@ -121,6 +122,10 @@ public class SnakeControllerCommandCacheImpl implements SnakeControllerCommandCa
 
     private SnakeControllerCommand createFoodEatenCommand() {
         return () -> soundService.playSound(Sound.FOOD_EATEN);
+    }
+
+    private SnakeControllerCommand createFoodEatenBonusCommand() {
+        return () -> soundService.playSound(Sound.FOOD_EATEN_BONUS);
     }
 
     private SnakeControllerCommand createOpenProjectURLCommand() {

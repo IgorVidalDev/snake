@@ -24,7 +24,7 @@ public interface SnakeControllerCommandCache {
         INCREASE_VOLUME,
         OPEN_PROJECT_URL,
         GAME_OVER,
-        FOOD_EATEN
+        FOOD_EATEN_BONUS, FOOD_EATEN
     }
 
     SnakeControllerCommand getSnakeControllerCommand(SnakeControllerCommandType snakeControllerCommandType);

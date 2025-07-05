@@ -42,6 +42,7 @@ public class SnakeControllerSnakeEventHandlerImpl implements SnakeControllerSnak
 
         snakeControllerCommandTypes.put(SnakeEvent.GAME_OVER, SnakeControllerCommandType.GAME_OVER);
         snakeControllerCommandTypes.put(SnakeEvent.FOOD_EATEN, SnakeControllerCommandType.FOOD_EATEN);
+        snakeControllerCommandTypes.put(SnakeEvent.FOOD_EATEN_BONUS, SnakeControllerCommandType.FOOD_EATEN_BONUS);
     }
 
     @Override
