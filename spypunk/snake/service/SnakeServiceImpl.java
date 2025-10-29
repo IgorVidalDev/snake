@@ -90,7 +90,7 @@ public class SnakeServiceImpl implements SnakeService {
 
     @Override
     public void pause() {
-        snake.setState(snake.getState().onPause());
+        snake.setState(snake.getState().togglePause());
     }
 
     @Override
