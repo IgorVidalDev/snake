@@ -12,7 +12,9 @@ import static spypunk.snake.ui.constants.SnakeUIConstants.CELL_SIZE;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import javax.swing.Timer;
 
+import spypunk.snake.service.HighScoreManager;
 import spypunk.snake.model.Snake;
 import spypunk.snake.ui.cache.ImageCache;
 import spypunk.snake.ui.font.cache.FontCache;
@@ -21,21 +23,60 @@ import spypunk.snake.ui.util.SwingUtils.Text;
 
 public class SnakeScoreView extends AbstractSnakeView {
 
-    private final Rectangle scoreRectangle = new Rectangle(0, 0, 30 * CELL_SIZE, 2 * CELL_SIZE);
+    // definindo àreas dos Pontos e Recorde
+    private final Rectangle scoreRectangle = new Rectangle(50, 0, 12 * CELL_SIZE, 2 * CELL_SIZE);
+    private final Rectangle highScoreRectangle = new Rectangle(300, 0, 15 * CELL_SIZE, 2 * CELL_SIZE);
+
+    private final HighScoreManager highScoreManager;
+
+    private int displayedHighScore;
+    private boolean showRecord = true;
+    private boolean recordBlinking = false;
 
     public SnakeScoreView(final FontCache fontCache,
-            final ImageCache imageCache,
-            final Snake snake) {
+                          final ImageCache imageCache,
+                          final Snake snake,
+                          final HighScoreManager highScoreManager) {
         super(fontCache, imageCache, snake);
-
-        initializeComponent(scoreRectangle.width, scoreRectangle.height);
+        this.highScoreManager = highScoreManager;
+        this.displayedHighScore = highScoreManager.getHighScore();
+        initializeComponent(scoreRectangle.width + highScoreRectangle.width,
+                            Math.max(scoreRectangle.height, highScoreRectangle.height));
     }
 
     @Override
     protected void doPaint(final Graphics2D graphics) {
-        final String score = String.valueOf(snake.getScore());
-        final Text scoreText = new Text(score, fontCache.getScoreFont());
+        final int currentScore = snake.getScore();
 
+        final Text scoreText = new Text("Pontos: " + currentScore, fontCache.getScoreFont());
         SwingUtils.renderCenteredText(graphics, scoreRectangle, scoreText);
+
+        // atualiza displayedHighScore se score atual ultrapassou o record antigo
+        if (currentScore > displayedHighScore) {
+            displayedHighScore = currentScore;
+
+            // efeito de piscar por 3 segundos
+            if (!recordBlinking) {
+                recordBlinking = true;
+
+                Timer blinkTimer = new Timer(300, e -> showRecord = !showRecord);
+                blinkTimer.setRepeats(true);
+                blinkTimer.start();
+
+                // parar de piscar após 3 segundos
+                new Timer(3000, e -> {
+                    blinkTimer.stop();
+                    showRecord = true;
+                    recordBlinking = false;
+                    ((Timer) e.getSource()).stop();
+                }).start();
+            }
+        }
+
+        // record (pisca quando bate novo)
+        if (showRecord) {
+            final Text highScoreText = new Text("Recorde: " + displayedHighScore, fontCache.getScoreFont());
+            SwingUtils.renderCenteredText(graphics, highScoreRectangle, highScoreText);
+        }
     }
 }
