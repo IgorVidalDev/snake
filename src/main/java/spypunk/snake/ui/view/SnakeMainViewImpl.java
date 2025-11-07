@@ -38,6 +38,7 @@ import spypunk.snake.ui.controller.SnakeController;
 import spypunk.snake.ui.font.cache.FontCache;
 import spypunk.snake.ui.icon.Icon;
 import spypunk.snake.ui.util.SwingUtils;
+import spypunk.snake.service.HighScoreManager;
 
 @Singleton
 public class SnakeMainViewImpl extends AbstractView implements SnakeMainView {
@@ -49,6 +50,8 @@ public class SnakeMainViewImpl extends AbstractView implements SnakeMainView {
     private final ImageIcon muteImageIcon;
 
     private final ImageIcon unmuteImageIcon;
+
+    private final HighScoreManager highScoreManager;
 
     private final class SnakeViewWindowListener extends WindowAdapter {
 
@@ -113,11 +116,13 @@ public class SnakeMainViewImpl extends AbstractView implements SnakeMainView {
     public SnakeMainViewImpl(final SnakeController snakeController,
             final FontCache fontCache,
             final ImageCache imageCache,
-            final @SnakeProvider Snake snake) {
+            final @SnakeProvider Snake snake,
+            final HighScoreManager highScoreManager){
         super(fontCache, imageCache, snake);
+        this.highScoreManager = highScoreManager;
 
         final SnakeGridView snakeGridView = new SnakeGridView(fontCache, imageCache, snake);
-        final SnakeScoreView snakeScoreView = new SnakeScoreView(fontCache, imageCache, snake);
+        final SnakeScoreView snakeScoreView = new SnakeScoreView(fontCache, imageCache, snake, highScoreManager);
         final SnakeStatisticView snakeNormalStatisticView = new SnakeStatisticView(fontCache, imageCache, snake,
                 Type.NORMAL);
         final SnakeStatisticView snakeBonusStatisticView = new SnakeStatisticView(fontCache, imageCache, snake,
