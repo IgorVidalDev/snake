@@ -8,6 +8,7 @@
 
 package spypunk.snake.service;
 
+import spypunk.snake.service.HighScoreManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Deque;
@@ -49,9 +50,12 @@ public class SnakeServiceImpl implements SnakeService {
 
     private static Snake snake;
 
+    private final HighScoreManager highScoreManager;
+
     @Inject
-    public SnakeServiceImpl(@SnakeProvider final Snake snake) {
+    public SnakeServiceImpl(@SnakeProvider final Snake snake, final HighScoreManager highScoreManager) {
         this.snake = snake;
+	this.highScoreManager = highScoreManager;
     }
 
     @Override
@@ -86,7 +90,7 @@ public class SnakeServiceImpl implements SnakeService {
 
     @Override
     public void pause() {
-        snake.setState(snake.getState().onPause());
+        snake.setState(snake.getState().togglePause());
     }
 
     @Override
@@ -151,6 +155,10 @@ public class SnakeServiceImpl implements SnakeService {
         } else {
             snake.setState(State.GAME_OVER);
             snake.getSnakeEvents().add(SnakeEvent.GAME_OVER);
+
+	  if (snake.getScore() > highScoreManager.getHighScore()) {
+        highScoreManager.saveHighScore(snake.getScore());
+    }
         }
 
         resetCurrentMovementFrame();
