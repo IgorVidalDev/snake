@@ -20,32 +20,33 @@ import spypunk.snake.model.Food.Type;
 public class Snake {
 
     private final String name;
-
     private final String version;
-
     private final URI projectURI;
 
     private SnakeInstance snakeInstance;
+
+    private static final boolean SOUND_MUTED = true;
+    private static final boolean SOUND_ON = false;
 
     private boolean muted;
 
     public enum State {
         RUNNING {
             @Override
-            public State onPause() {
+            public State togglePause() {
                 return PAUSED;
             }
         },
         PAUSED {
             @Override
-            public State onPause() {
+            public State togglePause() {
                 return RUNNING;
             }
         },
         GAME_OVER,
         STOPPED;
 
-        public State onPause() {
+        public State togglePause() {
             return this;
         }
     }
@@ -54,8 +55,7 @@ public class Snake {
         this.name = name;
         this.version = version;
         this.projectURI = projectURI;
-
-        snakeInstance = new SnakeInstance();
+        this.snakeInstance = new SnakeInstance();
     }
 
     public String getName() {
@@ -74,6 +74,14 @@ public class Snake {
         this.snakeInstance = snakeInstance;
     }
 
+    public void muteSound() {
+        this.muted = SOUND_MUTED;
+    }
+
+    public void unmuteSound() {
+        this.muted = SOUND_ON;
+    }
+
     public boolean isMuted() {
         return muted;
     }
@@ -83,86 +91,98 @@ public class Snake {
     }
 
     public List<SnakeEvent> getSnakeEvents() {
-        return snakeInstance.getSnakeEvents();
+        return instance().getSnakeEvents();
+    }
+
+    private SnakeInstance instance() {
+        return snakeInstance;
     }
 
     public int getScore() {
-        return snakeInstance.getScore();
+        return instance().getScore();
     }
 
     public void setScore(final int score) {
-        snakeInstance.setScore(score);
+        instance().setScore(score);
     }
 
     public int getSpeed() {
-        return snakeInstance.getSpeed();
+        return instance().getSpeed();
     }
 
     public void setSpeed(final int speed) {
-        snakeInstance.setSpeed(speed);
+        instance().setSpeed(speed);
     }
 
     public int getCurrentMovementFrame() {
-        return snakeInstance.getCurrentMovementFrame();
+        return instance().getCurrentMovementFrame();
     }
 
     public void setCurrentMovementFrame(final int currentMoveFrame) {
-        snakeInstance.setCurrentMovementFrame(currentMoveFrame);
+        instance().setCurrentMovementFrame(currentMoveFrame);
     }
 
     public LinkedList<Point> getSnakePartLocations() {
-        return snakeInstance.getSnakePartLocations();
+        return instance().getSnakePartLocations();
     }
 
     public Direction getDirection() {
-        return snakeInstance.getDirection();
+        return instance().getDirection();
     }
 
     public void setDirection(final Direction direction) {
-        snakeInstance.setDirection(direction);
+        instance().setDirection(direction);
     }
 
     public Optional<Direction> getNextDirection() {
-        return snakeInstance.getNextDirection();
+        return instance().getNextDirection();
     }
 
     public void setNextDirection(final Direction direction) {
-        snakeInstance.setNextDirection(direction);
+        instance().setNextDirection(direction);
     }
 
     public int getFramesSinceLastFoodPopped() {
-        return snakeInstance.getFramesSinceLastFoodPopped();
+        return instance().getFramesSinceLastFoodPopped();
     }
 
     public void setFramesSinceLastFoodPopped(final int framesSinceLastFoodPopped) {
-        snakeInstance.setFramesSinceLastFoodPopped(framesSinceLastFoodPopped);
+        instance().setFramesSinceLastFoodPopped(framesSinceLastFoodPopped);
     }
 
     public Food getFood() {
-        return snakeInstance.getFood();
+        return instance().getFood();
     }
 
     public void setFood(final Food food) {
-        snakeInstance.setFood(food);
+        instance().setFood(food);
     }
 
     public Map<Type, Integer> getStatistics() {
-        return snakeInstance.getStatistics();
+        return instance().getStatistics();
     }
 
     public boolean isFoodPopped() {
-        return snakeInstance.isFoodPopped();
+        return instance().isFoodPopped();
     }
 
     public void setFoodPopped(final boolean foodPopped) {
-        snakeInstance.setFoodPopped(foodPopped);
+        instance().setFoodPopped(foodPopped);
     }
 
     public State getState() {
-        return snakeInstance.getState();
+        return instance().getState();
     }
 
     public void setState(final State state) {
-        snakeInstance.setState(state);
+        instance().setState(state);
     }
+
+    public int getLives() {
+    return lives;
+}
+
+    public void setLives(final int lives) {
+    this.lives = lives;
+}
 }

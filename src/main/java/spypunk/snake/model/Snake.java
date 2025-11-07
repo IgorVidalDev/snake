@@ -169,4 +169,14 @@ public class Snake {
     public void setState(final State state) {
         instance().setState(state);
     }
+
+
+    
+    public int getLives() {
+    return instance().getLives();
+}
+
+    public void setLives(final int lives) {
+    instance().setLives(lives);
+}
 }

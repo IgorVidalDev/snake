@@ -20,7 +20,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URI;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.BorderFactory;
@@ -148,10 +147,12 @@ public class SnakeMainViewImpl extends AbstractView implements SnakeMainView {
 
         final JPanel topPanel = new JPanel(new BorderLayout());
 
+        
         final JPanel statisticsPanel = new JPanel(new BorderLayout(0, 3));
 
         statisticsPanel.add(snakeNormalStatisticView.getComponent(), BorderLayout.NORTH);
         statisticsPanel.add(snakeBonusStatisticView.getComponent(), BorderLayout.SOUTH);
+
         statisticsPanel.setBackground(Color.BLACK);
 
         topPanel.add(statisticsPanel, BorderLayout.WEST);

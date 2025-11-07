@@ -7,7 +7,7 @@
  */
 
 package spypunk.snake.guice;
-
+import spypunk.snake.service.HighScoreManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.ElementType;
@@ -98,6 +98,7 @@ public class SnakeModule extends AbstractModule {
         bind(SnakeControllerSnakeEventHandler.class).to(SnakeControllerSnakeEventHandlerImpl.class);
         bind(SnakeControllerGameLoop.class).to(SnakeControllerGameLoopImpl.class);
         bind(SnakeMainView.class).to(SnakeMainViewImpl.class);
+        bind(HighScoreManager.class).in(Singleton.class);
     }
 
     @Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })

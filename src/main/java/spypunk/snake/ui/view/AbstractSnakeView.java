@@ -9,12 +9,11 @@
 package spypunk.snake.ui.view;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-
+import java.awt.Component;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
@@ -48,10 +47,9 @@ public abstract class AbstractSnakeView extends AbstractView {
         super(fontCache, imageCache, snake);
     }
 
-    protected void initializeComponent(final int width, final int height) {
-        snakeViewComponent.setPreferredSize(new Dimension(width, height));
-    }
-
+   protected void initializeComponent(final int width, final int height) {
+    snakeViewComponent.setPreferredSize(new Dimension(width, height));
+}
     protected void initializeComponentWithBorders(final int width, final int height) {
         initializeComponent(width, height);
 

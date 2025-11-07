@@ -68,6 +68,7 @@ public class SnakeServiceImpl implements SnakeService {
         snakePartLocations.add(new Point(x, 1));
         snakePartLocations.add(new Point(x, 0));
 
+        snake.setLives(3);
         snake.setSnakeInstance(new SnakeInstance());
         snake.setSpeed(DEFAULT_SPEED);
         snake.setDirection(Direction.DOWN);
@@ -250,4 +251,41 @@ public class SnakeServiceImpl implements SnakeService {
     public static State getState(){
         return snake.getState();
     }
+
+    private void resetSnakeAfterLifeLost() {
+    final List<Point> snakePartLocations = Lists.newArrayList();
+
+    final int x = SnakeConstants.WIDTH / 2;
+
+    snakePartLocations.add(new Point(x, 2));
+    snakePartLocations.add(new Point(x, 1));
+    snakePartLocations.add(new Point(x, 0));
+
+    snake.getSnakePartLocations().clear();
+    snake.getSnakePartLocations().addAll(snakePartLocations);
+    snake.setSpeed(DEFAULT_SPEED);
+    snake.setDirection(Direction.DOWN);
+    snake.setNextDirection(null);
+    snake.setCurrentMovementFrame(0);
+
+    // Gera nova comida
+    popNextFood();
+}
+
+    private void handleCollision() {
+    snake.setLives(snake.getLives() - 1);
+
+    if (snake.getLives() > 0) {
+        // Ainda tem vidas, reseta a cobra
+        resetSnakeAfterLifeLost();
+    } else {
+        // Sem vidas, fim de jogo
+        snake.setState(State.GAME_OVER);
+        snake.getSnakeEvents().add(SnakeEvent.GAME_OVER);
+
+        if (snake.getScore() > highScoreManager.getHighScore()) {
+            highScoreManager.saveHighScore(snake.getScore());
+        }
+    }
+}
 }

@@ -50,6 +50,7 @@ import spypunk.snake.ui.font.cache.FontCacheImpl;
 import spypunk.snake.ui.view.SnakeMainView;
 import spypunk.snake.ui.view.SnakeMainViewImpl;
 
+
 public class SnakeModule extends AbstractModule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);

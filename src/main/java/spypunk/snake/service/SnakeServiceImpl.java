@@ -32,7 +32,7 @@ import spypunk.snake.model.Snake;
 import spypunk.snake.model.Snake.State;
 import spypunk.snake.model.SnakeEvent;
 import spypunk.snake.model.SnakeInstance;
-
+import spypunk.snake.service.HighScoreManager;
 @Singleton
 public class SnakeServiceImpl implements SnakeService {
 
@@ -69,6 +69,7 @@ public class SnakeServiceImpl implements SnakeService {
         snakePartLocations.add(new Point(x, 0));
 
         snake.setSnakeInstance(new SnakeInstance());
+        snake.setLives(3);
         snake.setSpeed(DEFAULT_SPEED);
         snake.setDirection(Direction.DOWN);
         snake.getSnakePartLocations().addAll(snakePartLocations);
@@ -141,29 +142,31 @@ public class SnakeServiceImpl implements SnakeService {
     }
 
     private void handleMovement() {
-        if (!isTimeToHandleMovement()) {
-            incrementCurrentMovementFrame();
-            return;
-        }
-
-        handleDirection();
-
-        final Point nextLocation = getNextLocation();
-
-        if (canSnakeMove(nextLocation)) {
-            moveSnake(nextLocation);
-        } else {
-            snake.setState(State.GAME_OVER);
-            snake.getSnakeEvents().add(SnakeEvent.GAME_OVER);
-
-	  if (snake.getScore() > highScoreManager.getHighScore()) {
-        highScoreManager.saveHighScore(snake.getScore());
-    }
-        }
-
-        resetCurrentMovementFrame();
+    if (!isTimeToHandleMovement()) {
+        incrementCurrentMovementFrame();
+        return;
     }
 
+    handleDirection();
+
+    Point nextLocation = getNextLocation();
+
+    // Lógica de "Wrap-around" (sem bordas)
+    if (!gridRectangle.contains(nextLocation)) {
+        nextLocation = getWrappedLocation(nextLocation);
+    }
+
+    // Lógica de Colisão (com vidas)
+    // A única colisão agora é a auto-colisão
+    if (snake.getSnakePartLocations().contains(nextLocation)) {
+        handleCollision();
+    } else {
+        // Movimento normal
+        moveSnake(nextLocation);
+    }
+
+    resetCurrentMovementFrame();
+}
     private void incrementCurrentMovementFrame() {
         snake.setCurrentMovementFrame(snake.getCurrentMovementFrame() + 1);
     }
@@ -232,9 +235,65 @@ public class SnakeServiceImpl implements SnakeService {
         return direction.apply(snakeHeadPartLocation);
     }
 
-    private boolean canSnakeMove(final Point location) {
-        return gridRectangle.contains(location) && !snake.getSnakePartLocations().contains(location);
+    private Point getWrappedLocation(Point location) {
+    int x = location.x;
+    int y = location.y;
+
+    if (x < 0) {
+        x = SnakeConstants.WIDTH - 1;
+    } else if (x >= SnakeConstants.WIDTH) {
+        x = 0;
     }
+
+    if (y < 0) {
+        y = SnakeConstants.HEIGHT - 1;
+    } else if (y >= SnakeConstants.HEIGHT) {
+        y = 0;
+    }
+
+    return new Point(x, y);
+}
+
+/**
+ * Reseta a posição da cobra após perder uma vida, mantendo a pontuação.
+ */
+private void resetSnakeAfterLifeLost() {
+    final List<Point> snakePartLocations = Lists.newArrayList();
+
+    final int x = SnakeConstants.WIDTH / 2;
+
+    snakePartLocations.add(new Point(x, 2));
+    snakePartLocations.add(new Point(x, 1));
+    snakePartLocations.add(new Point(x, 0));
+
+    snake.getSnakePartLocations().clear();
+    snake.getSnakePartLocations().addAll(snakePartLocations);
+    snake.setDirection(Direction.DOWN);
+    snake.setNextDirection(null);
+    snake.setCurrentMovementFrame(0);
+
+    popNextFood();
+}
+
+
+private void handleCollision() {
+    snake.setLives(snake.getLives() - 1);
+
+    if (snake.getLives() > 0) {
+        // Ainda tem vidas, reseta a cobra
+        resetSnakeAfterLifeLost();
+    } else {
+        // Sem vidas, fim de jogo
+        snake.setState(State.GAME_OVER);
+        snake.getSnakeEvents().add(SnakeEvent.GAME_OVER);
+
+        // Salva o high score (lógica que estava em handleMovement)
+        // Agora isso vai funcionar porque injetamos o highScoreManager
+        if (snake.getScore() > highScoreManager.getHighScore()) {
+            highScoreManager.saveHighScore(snake.getScore());
+        }
+    }
+}
 
     private boolean isTimeToHandleMovement() {
         return snake.getCurrentMovementFrame() == snake.getSpeed();

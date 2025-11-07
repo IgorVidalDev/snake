@@ -32,6 +32,8 @@ public class SnakeInstance {
 
     private int score;
 
+    private int lives;
+
     private int speed;
 
     private int currentMovementFrame;
@@ -137,4 +139,13 @@ public class SnakeInstance {
     public void setState(final State state) {
         this.state = state;
     }
+
+   
+    public int getLives() {
+    return lives;
+}
+
+    public void setLives(final int lives) {
+    this.lives = lives;
+}
 }

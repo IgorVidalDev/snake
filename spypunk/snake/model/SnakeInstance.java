@@ -137,4 +137,6 @@ public class SnakeInstance {
     public void setState(final State state) {
         this.state = state;
     }
+
+    
 }
