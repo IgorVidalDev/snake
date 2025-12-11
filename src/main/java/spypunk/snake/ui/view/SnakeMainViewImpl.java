@@ -120,57 +120,68 @@ public class SnakeMainViewImpl extends AbstractView implements SnakeMainView {
         super(fontCache, imageCache, snake);
         this.highScoreManager = highScoreManager;
 
+        // Criação das views separadas
         final SnakeGridView snakeGridView = new SnakeGridView(fontCache, imageCache, snake);
-        final SnakeScoreView snakeScoreView = new SnakeScoreView(fontCache, imageCache, snake, highScoreManager);
-        final SnakeStatisticView snakeNormalStatisticView = new SnakeStatisticView(fontCache, imageCache, snake,
-                Type.NORMAL);
-        final SnakeStatisticView snakeBonusStatisticView = new SnakeStatisticView(fontCache, imageCache, snake,
-                Type.BONUS);
+        // Note que o construtor do ScoreView agora tem menos argumentos (removemos o manager)
+        final SnakeScoreView snakeScoreView = new SnakeScoreView(fontCache, imageCache, snake);
+        // Nova view de Recorde
+        final SnakeRecordView snakeRecordView = new SnakeRecordView(fontCache, imageCache, snake, highScoreManager);
+        final SnakeLivesView snakeLivesView = new SnakeLivesView(fontCache, imageCache, snake);
+        
+        final SnakeStatisticView snakeNormalStatisticView = new SnakeStatisticView(fontCache, imageCache, snake, Type.NORMAL);
+        final SnakeStatisticView snakeBonusStatisticView = new SnakeStatisticView(fontCache, imageCache, snake, Type.BONUS);
 
         muteImageIcon = new ImageIcon(imageCache.getIcon(Icon.MUTE));
         unmuteImageIcon = new ImageIcon(imageCache.getIcon(Icon.UNMUTE));
 
         final URI projectURI = snake.getProjectURI();
-
         muteLabel = new JLabel(unmuteImageIcon);
-
         final JLabel urlLabel = new JLabel(projectURI.getHost() + projectURI.getPath());
-
         urlLabel.setFont(fontCache.getURLFont());
         urlLabel.setForeground(DEFAULT_FONT_COLOR);
         urlLabel.addMouseListener(new URLLabelMouseAdapter(snakeController, urlLabel));
 
-        final JPanel bottomPanel = new JPanel(new BorderLayout());
-
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(CELL_SIZE, 3, 3, 3));
-        bottomPanel.setBackground(Color.BLACK);
-
-        final JPanel topPanel = new JPanel(new BorderLayout());
-
-        
+        // --- PAINEL DE ESTATÍSTICAS (ESQUERDA) ---
         final JPanel statisticsPanel = new JPanel(new BorderLayout(0, 3));
-
         statisticsPanel.add(snakeNormalStatisticView.getComponent(), BorderLayout.NORTH);
         statisticsPanel.add(snakeBonusStatisticView.getComponent(), BorderLayout.SOUTH);
-
         statisticsPanel.setBackground(Color.BLACK);
 
+        // --- PAINEL CENTRAL (PONTOS E RECORDE) ---
+        // Usamos um FlowLayout centralizado para que Pontos e Recorde fiquem no meio
+        // O valor '20' é o espaçamento horizontal entre eles
+        final JPanel scoresPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 0));
+        scoresPanel.setBackground(Color.BLACK);
+        scoresPanel.add(snakeScoreView.getComponent());
+        scoresPanel.add(snakeRecordView.getComponent());
+
+        // --- PAINEL DE VIDAS (DIREITA) ---
+        // O snakeLivesView já é adicionado diretamente
+
+        // --- MONTAGEM DO PAINEL SUPERIOR ---
+        final JPanel topPanel = new JPanel(new BorderLayout());
+        
         topPanel.add(statisticsPanel, BorderLayout.WEST);
-        topPanel.add(snakeScoreView.getComponent(), BorderLayout.CENTER);
+        topPanel.add(scoresPanel, BorderLayout.CENTER); // Adiciona o sub-painel com Pontos/Recorde
+        topPanel.add(snakeLivesView.getComponent(), BorderLayout.EAST);
+        
         topPanel.setBackground(Color.BLACK);
+        // Ajuste nas bordas para dar respiro (Cima, Esquerda, Baixo, Direita)
         topPanel.setBorder(BorderFactory.createEmptyBorder(CELL_SIZE / 2, CELL_SIZE, CELL_SIZE / 2, CELL_SIZE));
 
+        // ... (restante do código: bottomPanel, centerPanel, frame config mantidos iguais) ...
+        final JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(CELL_SIZE, 3, 3, 3));
+        bottomPanel.setBackground(Color.BLACK);
         bottomPanel.add(muteLabel, BorderLayout.WEST);
         bottomPanel.add(urlLabel, BorderLayout.EAST);
 
         final JPanel centerPanel = new JPanel(new BorderLayout(CELL_SIZE, 0));
-
         centerPanel.setBackground(Color.BLACK);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(0, CELL_SIZE, 0, CELL_SIZE));
         centerPanel.add(snakeGridView.getComponent(), BorderLayout.CENTER);
 
         frame = new JFrame(snake.getName() + " " + snake.getVersion());
-
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout(0, 0));
         frame.setResizable(false);
@@ -183,7 +194,6 @@ public class SnakeMainViewImpl extends AbstractView implements SnakeMainView {
         frame.add(centerPanel, BorderLayout.CENTER);
         frame.add(bottomPanel, BorderLayout.SOUTH);
         frame.pack();
-
         frame.setLocationRelativeTo(null);
     }
 
